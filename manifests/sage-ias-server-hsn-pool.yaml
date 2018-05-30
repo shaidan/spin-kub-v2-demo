@@ -51,7 +51,7 @@ spec:
   type: NodePort
   ports:
   - port: 8080
-    nodePort: 31106
+    nodePort: 31107
   selector:
     app: sage-ias-server-hsn-pool
     environment: developer
