@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: sage-ias-server-hsn-pool
+  namespace: developer
+spec:
+  replicas: 1
+  minReadySeconds: 60
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: sage-ias-server-hsn-pool
+      environment: developer
+  template:
+    metadata:
+      labels:
+        app: sage-ias-server-hsn-pool
+        environment: developer
+    spec:
+      containers:
+      - name: sage-ias-server-hsn-pool
+        image: docker-registry.haima.me:5000/sage-ias-server-hsn-pool
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 300m
+            memory: 300Mi
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: APP_CLASS
+          value: "com.haima.sage.Application"
+        - name: CONFIG_URI
+          value: "http://172.16.2.145:8888"
+        - name: LABEL
+          value: "dev-devops"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sage-ias-server-hsn-pool
+  namespace: developer
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    nodePort: 31106
+  selector:
+    app: sage-ias-server-hsn-pool
+    environment: developer
